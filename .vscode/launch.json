@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Python: Trainer",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+        },
+        {
+            "name": "Python: Inference (merging)",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "h",
+                "--im", "\".\\tiny_imagenet\\test\\test_01.jpg\"",
+                "--imh", "\".\\tiny_imagenet\\test\\test_02.jpg\""
+            ]
+        },
+        {
+            "name": "Python: Inference (recovery)",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "r",
+                "--im", "\".\\merged.png\"",
+            ]
+        }
+    ]
+}
