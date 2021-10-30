@@ -2,7 +2,7 @@
 ## Description
 This is a PyTorch Reimplementation of [High-Capacity Convolutional Video Steganography with Temporal Residual Modeling (ICMR2019, oral)](https://dl.acm.org/doi/abs/10.1145/3323873.3325011).
 
-* The pre-trained model provided was trained on tiny_imagenet dataset.
+* The pre-trained model provided was trained on the tiny_imagenet dataset.
 
 
 ## Prerequisites
@@ -20,7 +20,7 @@ cd Deep-Image-Steganography-Reimplementation
 ```
 
 ### 2. Data
-* Download Train, Validation and Test Data: [Tiny-Imagenet-200](http://cs231n.stanford.edu/tiny-imagenet-200.zip). Put it on the root folder.
+* Download Train, Validation and Test Data: [Tiny-Imagenet-200](http://cs231n.stanford.edu/tiny-imagenet-200.zip). Put it in the root folder.
 
 
 Here is an example:
