@@ -1,5 +1,6 @@
 import os
 from PIL import Image
+import torch
 from torch.utils.data import Dataset
 
 
@@ -28,10 +29,9 @@ class CustomDataset(Dataset):
         self.transform = transform
 
     def __len__(self) -> int:
-        return 1000
         return len(self.src_files)
 
-    def __getitem__(self, idx: int):
+    def __getitem__(self, idx: int) -> torch.Tensor:
         img_name = self.src_files[idx]
         image = Image.open(str(img_name)).convert('RGB')
 

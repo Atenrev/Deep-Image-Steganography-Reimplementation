@@ -30,14 +30,14 @@ Here is an example:
 ├── model.py
 ├── inference.py
 ├── trainer.py
-├── model
-└── tiny_imagenet
+├── model\
+└── tiny_imagenet\
     ├── train
     ├── val
     └── test
 ```
 
-You can also use your own dataset. In that case, pass the ```--train_dataset``` and ```--val_dataset``` to the ```trainer.py``` arguments.
+You can also use your own dataset. In that case, pass the ```--train_dataset``` and ```--val_dataset``` arguments to ```trainer.py```.
 
 ## Train
 Run ```train.py```:
@@ -51,7 +51,6 @@ optional arguments:
   --val_dataset VAL_DATASET         location of the dataset
   --batch_size BATCH_SIZE           training batch size
   --image_size IMAGE_SIZE           image size
-  --val_perc VAL_PERC               validation data percentage
   --epochs EPOCHS                   number of training epochs
   --lr LR                           learning rate
   --beta1 BETA1                     adam beta
@@ -63,4 +62,13 @@ Run ```inference.py```:
 
 ``` sh
 python .\inference.py --mode r --im "merged.jpg"
+
+optional arguments:
+  -h, --help                    show this help message and exit
+  --load_model LOAD_MODEL       model to load and do inference
+  --mode {h,r}                  inference mode. h for hiding, r for recovering
+  --im IM                       path of the image used as cover
+  --imh IMH                     path of the image to hide
+  --out OUT                     save path for the output
+  --image_size IMAGE_SIZE       image size
 ```

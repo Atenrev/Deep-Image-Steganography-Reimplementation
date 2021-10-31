@@ -23,8 +23,6 @@ def _parse_args() -> object:
                         help='training batch size')
     parser.add_argument('--image_size', type=int, default=64,
                         help='image size')
-    parser.add_argument('--val_perc', type=float, default=0.1,
-                        help='validation data percentage')
     parser.add_argument('--epochs', type=int, default=10,
                         help='number of training epochs')
     parser.add_argument('--lr', type=float, default=0.001,
@@ -44,25 +42,26 @@ class Trainer:
     model: AutoSteganographer
     train_loader: DataLoader
     val_loader: DataLoader
-    save_path: str
+    save_dir: str
     device: torch.device
     loss_fn: object
-    optimizer: object
+    optimizer_merger: torch.optim.Adam
+    optimizer_decoder: torch.optim.Adam
     lr: float
-    epochs: int
+    num_epochs: int
 
     def __init__(self,
                  model: torch.nn.Module,
                  train_loader: DataLoader,
                  val_loader: DataLoader,
-                 save_path: str = "./model",
+                 save_dir: str = "./model",
                  learning_rate: float = 0.001,
                  num_epochs: int = 10,
                  adam_beta: float = 0.5
                  ) -> None:
         # torch.manual_seed(42)
 
-        self.save_path = save_path
+        self.save_dir = save_dir
         self.model = model
         self.train_loader = train_loader
         self.val_loader = val_loader
@@ -77,7 +76,7 @@ class Trainer:
 
         self.device = torch.device(
             "cuda") if torch.cuda.is_available() else torch.device("cpu")
-        print(f'Selected device: {self.device}')
+        print(f'Selected device: {self.device}.')
 
         self.model.to(self.device)
 
@@ -153,7 +152,8 @@ class Trainer:
                 self.device)
 
             ax = plt.subplot(4, n, i + 1)
-            plt.imshow(np.moveaxis(original_image_batch[0].cpu().squeeze().numpy(), 0, -1))
+            plt.imshow(np.moveaxis(
+                original_image_batch[0].cpu().squeeze().numpy(), 0, -1))
             ax.get_xaxis().set_visible(False)
             ax.get_yaxis().set_visible(False)
 
@@ -161,7 +161,8 @@ class Trainer:
                 ax.set_title('Original images')
 
             ax = plt.subplot(4, n, i + 1 + n)
-            plt.imshow(np.moveaxis(hidden_image_batch[0].cpu().squeeze().numpy(), 0, -1))
+            plt.imshow(np.moveaxis(
+                hidden_image_batch[0].cpu().squeeze().numpy(), 0, -1))
             ax.get_xaxis().set_visible(False)
             ax.get_yaxis().set_visible(False)
 
@@ -209,12 +210,14 @@ class Trainer:
                                                                           1, self.num_epochs, train_loss, val_loss))
 
         torch.save(self.model.state_dict(), os.path.join(
-            self.save_path, "autosteganographer.pth"))
+            self.save_dir, "autosteganographer.pth"))
 
         self.plot_ae_outputs(n=5)
 
 
 def main(args) -> None:
+    os.makedirs(args.save_dir, exist_ok=True)
+
     # Prepare the data
     train_transform = transforms.Compose([
         transforms.Resize([args.image_size, args.image_size]),
@@ -238,11 +241,20 @@ def main(args) -> None:
     model = AutoSteganographer()
 
     if args.load_model is not None:
-        model.load_state_dict(torch.load(args.load_model))
+        print("Loading pre-trained model.")
+
+        try:
+            model.load_state_dict(torch.load(args.load_model))
+        except:
+            print("ERROR: The state dictionary could not be loaded.")
+            return
 
     # Trainer
-    trainer = Trainer(model, train_loader, val_loader, save_path=args.save_dir,
-                      learning_rate=args.lr, num_epochs=args.epochs)
+    trainer = Trainer(model, train_loader, val_loader,
+                      save_dir=args.save_dir,
+                      learning_rate=args.lr,
+                      num_epochs=args.epochs,
+                      adam_beta=args.beta1)
     trainer.train()
 
 

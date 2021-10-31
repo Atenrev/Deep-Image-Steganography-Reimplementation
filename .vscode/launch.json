@@ -11,6 +11,9 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
+            "args": [
+                "--load_model", "model\\autosteganographer_tiny_imagenet.pth",
+            ]
         },
         {
             "name": "Python: Inference (merging)",

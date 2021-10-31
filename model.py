@@ -3,11 +3,13 @@ from torch import nn
 
 
 class UBlock(nn.Module):
+    model: nn.Sequential
+    outermost: nn.Module
+
     def __init__(self, in_channels: int, out_channels: int, inner_channels: int,
                  submodule: nn.Module = None, innermost: bool = False, outermost: bool = False) -> None:
         super().__init__()
 
-        self.innermost = innermost
         self.outermost = outermost
 
         if in_channels is None:
@@ -49,7 +51,7 @@ class UBlock(nn.Module):
                 nn.LeakyReLU(0.2, True),
             )
 
-    def forward(self, x: torch.tensor):
+    def forward(self, x: torch.tensor) -> torch.tensor:
         if self.outermost:
             return self.model(x)
         else:
@@ -57,7 +59,7 @@ class UBlock(nn.Module):
 
 
 class AutoSteganographer(nn.Module):
-    merger: nn.Sequential
+    merger: UBlock
     revealer: nn.Sequential
 
     def __init__(self, channels: int = 16) -> None:
@@ -94,12 +96,12 @@ class AutoSteganographer(nn.Module):
             nn.Sigmoid()
         )
 
-    def merge(self, original: torch.tensor, hidden: torch.tensor):
+    def merge(self, original: torch.tensor, hidden: torch.tensor) -> torch.tensor:
         x = torch.cat((original, hidden), 1)
         x = self.merger(x)
         return x
 
-    def forward(self, original: torch.tensor, hidden: torch.tensor):
+    def forward(self, original: torch.tensor, hidden: torch.tensor) -> list:
         x = self.merge(original, hidden)
         y = self.revealer(x)
         return x, y

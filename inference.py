@@ -19,6 +19,8 @@ def _parse_args() -> object:
     parser = argparse.ArgumentParser(
         description='Steganography inference parser')
 
+    parser.add_argument('--load_model', type=str,
+                        help='model to load and do inference')
     parser.add_argument('--mode', type=str,
                         choices=[InferenceMode.HIDE.value,
                                  InferenceMode.RECOVER.value],
@@ -43,7 +45,7 @@ def main(args) -> None:
     ])
 
     model = AutoSteganographer()
-    model.load_state_dict(torch.load("model/autosteganographer.pth"))
+    model.load_state_dict(torch.load(args.load_model))
 
     image_original = Image.open(args.im).convert('RGB')
     image_original = transform(image_original)[None, :]
