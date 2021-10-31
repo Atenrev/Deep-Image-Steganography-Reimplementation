@@ -199,7 +199,7 @@ class Trainer:
         plt.show()
 
     def train(self) -> None:
-        val_loss = 0
+        best_val_loss = np.Inf
 
         for epoch in range(self.num_epochs):
             print(
@@ -208,6 +208,11 @@ class Trainer:
             val_loss = self.test_epoch()
             print('\n EPOCH {}/{} \t train loss {} \t val loss {}'.format(epoch +
                                                                           1, self.num_epochs, train_loss, val_loss))
+
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                torch.save(self.model.state_dict(), os.path.join(
+                    self.save_dir, f"autosteganographer_epoch_{epoch + 1}.pth"))
 
         torch.save(self.model.state_dict(), os.path.join(
             self.save_dir, "autosteganographer.pth"))
